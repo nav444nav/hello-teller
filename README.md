@@ -29,6 +29,17 @@ patterns on AWS.
 * **Operations:** CloudWatch + X-Ray monitoring, Cognito authentication, CI/CD pipeline running
   tests, `cdk synth`, and `cdk deploy`.
 
+## Implementation plan & cost guardrail
+We want to keep monthly spend under **$25** by relying on serverless, on-demand resources and
+tearing down demo stacks when idle. Delivery proceeds in two waves:
+
+1. **Backend-first:** build the CDK stacks, DynamoDB tables, Lambda handlers, and API Gateway
+   endpoints, then exercise them via Postman/newman collections before any UI work.
+2. **Frontend enablement:** once backend flows are verified, scaffold the Angular + NgRx SPA,
+   connect to the WebSocket feed, and deploy to S3 + CloudFront.
+
+Detailed TODOs for each phase live in [`docs/todo.md`](docs/todo.md).
+
 See [`docs/architecture.md`](docs/architecture.md) for detailed diagrams, workflows, and next steps.
 
 ## Future-ready
