@@ -9,6 +9,12 @@
 
 > **Action:** keep provisioned capacity off, rely on AWS Free Tier in dev, and delete demo stacks when not needed.
 
+## Immediate next step — scaffold the CDK app
+1. Install the AWS CDK toolchain (`npm install -g aws-cdk`) and run `cdk init app --language typescript` inside `infra/` so we can synthesize stacks locally before wiring any services.
+2. Create placeholder stacks (`DataStack`, `BackendStack`, `WorkflowStack`) plus a `PipelineStage` construct that composes them, matching the bullets below.
+3. Add a `cdk.json` context entry (e.g., `{ "app": "npx ts-node bin/hello-teller.ts" }`) and a `.env.example` documenting the AWS profile/region expected when running `cdk synth`.
+4. Validate the empty stacks with `npm run build && cdk synth` to make sure the baseline project compiles; this gives us a concrete place to start adding DynamoDB tables and Lambdas.
+
 ## Phase 1 — Backend-first (test via Postman)
 - [ ] Scaffold CDK app with `DataStack`, `BackendStack`, and `WorkflowStack` plus dev/prod stages.
 - [ ] Define DynamoDB tables (Sessions, Transactions, Approvals, Connections) with on-demand billing.
