@@ -1,46 +1,38 @@
-# hello-teller
-We are building a teller banking platform as a realistic but safe learning project.
+# Hello Teller
 
-Backend
+A serverless teller platform that simulates a production bank's teller console while staying safe,
+small, and inexpensive. The goal is to teach modern teller workflows, approvals, and real-time UI
+patterns on AWS.
 
-Runs entirely on AWS serverless (API Gateway HTTP + WebSocket, Lambda, DynamoDB, EventBridge, Step Functions).
+## Guiding principles
+* **Serverless-first:** API Gateway, Lambda, DynamoDB, EventBridge, and Step Functions handle all
+  backend logic so the platform costs almost nothing when idle.
+* **Realistic UX:** Angular + NgRx SPA mirrors the teller/supervisor consoles used in real banks,
+  including session management, approvals, and reversals.
+* **Infrastructure as code:** AWS CDK provisions every resource (backend, workflows, hosting) so we
+  can deploy or destroy the full environment quickly.
 
-Supports:
+## Core features
+* Teller login, session open/close with enforced balances.
+* Cash transactions (deposit, withdrawal) with configurable approval thresholds.
+* Supervisor approvals surfaced as a queue in the UI, with audit history.
+* Reversals modeled as first-class transactions with their own workflows.
+* Real-time UI updates via API Gateway WebSockets so tellers and supervisors always see the latest
+  data.
+* Event-driven backend using EventBridge + Step Functions for multi-step transaction flows.
 
-Teller sessions (open/close with balances)
+## Architecture highlights
+* **Backend:** API Gateway (HTTP + WebSocket) → Lambda → DynamoDB, with EventBridge and Step
+  Functions orchestrating approvals and reversals.
+* **Frontend:** Angular + NgRx SPA hosted in S3 + CloudFront, sharing one codebase for tellers and
+  supervisors using role-based guards.
+* **Operations:** CloudWatch + X-Ray monitoring, Cognito authentication, CI/CD pipeline running
+  tests, `cdk synth`, and `cdk deploy`.
 
-Cash transactions (deposit, withdrawal)
+See [`docs/architecture.md`](docs/architecture.md) for detailed diagrams, workflows, and next steps.
 
-Supervisor approvals for high-value transactions
-
-Transaction reversals as separate, linked transactions
-
-Uses EventBridge for domain events (e.g. TransactionUpdated, ApprovalRequested, TellerSessionOpened) and Step Functions for multi-step workflows (deposits and reversals with approvals).
-
-Stores operational data in DynamoDB (Transactions, Approvals, TellerSessions, RealtimeConnections), with the design allowing a future RDS “journal” DB if needed.
-
-Frontend
-
-A single-page Angular + NgRx UI that:
-
-Lets tellers open/close sessions
-
-Create deposits/withdrawals
-
-Request reversals
-
-Shows supervisors a list of pending approvals
-
-Receives real-time updates over WebSockets (e.g., transaction status changes, new approvals)
-
-Hosted on AWS via S3 + CloudFront.
-
-Architecture & goals
-
-Monorepo: infra/ for all CDK infrastructure, backend/ for domain and Lambda code, frontend/teller-ui/ for the Angular app.
-
-Realistic patterns: event-driven, real-time, approvals, reversals, workflows.
-
-All infra is defined in CDK so the whole system can be deployed and destroyed easily for cost control.
-
-Target cost: within $25–50/month, mostly idle and used via Postman + the UI for learning and demos.
+## Future-ready
+Although this is not a production core ledger, the design anticipates future upgrades:
+* Swap in Amazon RDS or Aurora PostgreSQL for a double-entry journal database.
+* Stream operational data to S3 for a data lake, then analyze in Snowflake or Athena.
+* Extend workflows with teller training scenarios or offline-capable clients.
